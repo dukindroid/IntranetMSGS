@@ -1,0 +1,62 @@
+extends ..\node_modules\pug-bootstrap\_bootstrap
+block body
+	+tab-list(["Principal","Perfil","Mensajes"],0)
+		+tab("Principal","active")
+			.page-header.text-center
+				span.fa.fa-anchor
+				|  Principal
+			p Bienvenido a la aplcación web IntranetMSGS. 
+		+tab("Perfil")
+			.page-header.text-center
+				span.fa.fa-anchor
+				|  Perfil
+			p Esta es la informacion de su perfil: 
+			.col-sm-6
+				.well
+					h3
+						span.fa.fa-user
+						|  Local
+					p
+						strong id
+						| :
+						br
+						strong email
+						| :
+						br
+						strong password
+						| :
+		+tab("Mensajes")
+			.page-header.text-center
+				span.fa.fa-anchor
+				|  Mensajes
+			p Envíe y reciba mensajes: 
+			.row
+				// Escribir mensaje
+				.col-sm-3
+					form(action='/enviarmensaje', method='post')
+						.form-group
+							label Para:
+							input.form-control(type='text', name='dest')
+						.form-group
+							.checkbox
+								label.radio-inline
+									input(type='radio', value='gerentes')
+									| Grupo Subgerentes
+							.checkbox
+								label.radio-inline
+									input(type='radio', value='ejecutivos')
+									| Grupo Ejecutivos
+							.checkbox
+								label.radio-inline
+									input(type='radio', value='todos')
+									| Todos
+						.form-group
+							label Mensaje
+							input.form-control(type='text', name='msg')
+						button.btn.btn-warning.btn-lg(type='submit') Enviar
+				// Ver lista de mensajes
+				.col-sm-9
+					.well
+						h3.text-primary
+							span.fa.fa-facebook
+							|  Bandeja de entrada

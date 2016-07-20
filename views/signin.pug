@@ -1,0 +1,27 @@
+extends ..\node_modules\pug-bootstrap\_bootstrap
+append scripts
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.5/validator.js")
+append styles
+  // Custom styles for this template
+  link(href='/stylesheets/signin.css', rel='stylesheet')
+block body
+  .container  
+    form.form-signin(data-toggle='validator', role='form', action='/signin', method='POST')
+        .form-group
+          h2.form-signin-heading Por favor, registre su cuenta:
+          if message
+            .alert.alert-danger= message
+          label.sr-only(for='inputEmail') Correo electrónico
+          input#inputEmail.form-control(type='email', name="username", class='form-control' placeholder='un@correo.com', required, autofocus='true' data-error='Este correo electrónico es inválido.')
+          .help-block.with-errors
+        .form-group
+          label.sr-only(for='inputPassword') Contraseña
+          .form-inline.row
+            .col-sm-6
+              input#inputPassword.form-control(type='password', data-minlength='6', name="password", placeholder='Contraseña', required)
+            .help-block.col-sm-6 Mínimo de 6 caracteres
+          .form-group.form-inline.row
+            .col-sm-6
+              input#inputPasswordConfirm.form-control(type='password', data-match='#inputPassword', data-match-error="Oops! Las contraseñas no coinciden.", placeholder='Vuelva a escribir', required)
+            .col-sm-6.help-block.with-errors
+        button.btn.btn-lg.btn-primary.btn-block(type='submit') Regístrese

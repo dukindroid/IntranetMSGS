@@ -1,0 +1,26 @@
+extends ..\node_modules\pug-bootstrap\_bootstrap
+append scripts
+	script(src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.5/validator.js")
+append styles
+	// Custom styles for this template
+	link(href='/stylesheets/signin.css', rel='stylesheet')
+block body
+	.container  
+		if (!user)
+			form.form-signin(data-toggle='validator', role='form', action='/login', method='POST')
+				.form-group
+					h2.form-signin-heading Ingrese a su cuenta:
+					label.sr-only(for='inputEmail') Correo electrónico
+					input#inputEmail.form-control(name="username", type='email', class='form-control' placeholder='Correo electrónico', required, autofocus='true' data-error='Este correo electrónico es inválido.')
+					.help-block.with-errors
+				.form-group
+					label.sr-only(for='inputPassword') Contraseña
+					.form-inline.row
+						.col-sm-6
+							input#inputPassword.form-control(name="password", type='password', data-minlength='6', placeholder='Contraseña', required)
+						.help-block.col-sm-6 Mínimo de 6 caracteres
+				button.btn.btn-lg.btn-primary.btn-block(type='submit') Ingresar
+		else 
+			p Registrado como #{user.username}
+			a.btn.btn-default(href="/logout")
+				span.fa.fa-sign-out Salir

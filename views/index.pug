@@ -1,0 +1,25 @@
+extends ..\node_modules\pug-bootstrap\_bootstrap
+append styles
+  style.
+      body { padding-top:80px; }
+block body
+  .container
+    .jumbotron.text-center
+      h1
+        i.fa.fa-send-o
+        |  IntranetMSGS
+      h2
+        i Autentificación mediante Node.js
+      br
+      if (!user)
+        p Ingrese o regístrese: 
+          a.btn.btn-default(href='/login')
+            span.fa.fa-key
+            |  Ingreso local 
+          a.btn.btn-default(href='/signin')
+            span.fa.fa-edit
+            |  Registro local
+      if (user)
+        p Registrado como #{user.username}
+        a.btn.btn-default(href="/logout")
+          span.fa.fa-sign-out Salir

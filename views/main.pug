@@ -1,0 +1,88 @@
+extends ..\node_modules\pug-bootstrap\_bootstrap
+append scripts
+	script(src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.5/validator.js")
+append styles
+	style.
+			body { padding-top:80px; }
+block body
+	.container
+		.jumbotron
+			ul.nav.nav-tabs(role='tablist')
+				li.active
+					a(href='#tabHome', role='tab', data-toggle='tab', aria-expanded='true') Principal
+				li
+					a(href='#tabProfile', role='tab', data-toggle='tab') Perfil
+				li
+					a(href='#tabMessages', role='tab', data-toggle='tab') Mensajes
+			.tab-content
+				#tabHome.tab-pane.active
+					h1
+						span.fa.fa-anchor
+						|  Principal
+					p Bienvenido a la aplcación web IntranetMSGS. 
+					p lorem ipsum
+					p asdf asdf asdf arwetgwerjltgadjgbnakl;sdjgasd
+					p werqawerawerawera
+				#tabProfile.tab-pane
+					h1
+						span.fa.fa-anchor
+						|  Perfil
+					p Esta es la informacion de su perfil: 
+					.row
+						.col-sm-6
+							.panel.panel-default
+								.panel-heading
+									h3.panel-title
+										span.fa.fa-user
+										|  Local
+								.panel-body
+									p
+										strong id
+										| :
+										br
+										strong email
+										| :
+										br
+										strong rol
+										| : 
+					//- p Ultima actualizacion: Ahorita!
+				#tabMessages.tab-pane
+					h1
+						span.fa.fa-anchor
+						|  Mensajes
+					p Envíe y reciba mensajes: 
+					.row
+						// Escribir mensaje
+						.col-sm-3
+							form.form-signin(data-toggle='validator', role='form' action='/enviarmensaje', method='POST')
+								.form-group
+									label Para:
+									input.form-control(type='text', name='dest', placeholder='destinatario(s)', required, autofocus='true')
+								.form-group
+									.radio
+										label.radio-inline
+											input(type='radio', name='roleDest', value='gerentes')
+											| Grupo Subgerentes
+									.radio
+										label.radio-inline
+											input(type='radio', name='roleDest', value='ejecutivos')
+											| Grupo Ejecutivos
+									.radio
+										label.radio-inline
+											input(type='radio', name='roleDest', value='todos')
+											| Todos
+								.form-group
+									label Mensaje
+									input.form-control(type='text', name='text', placeholder='Escriba su mensaje', required)
+								button.btn.btn-warning.btn-lg(type='submit') Enviar
+						// Ver lista de mensajes
+						.col-sm-9
+							.well
+								h3.text-primary
+									span.fa.fa-facebook
+									|  Bandeja de entrada
+									ul
+										if msgsAll 
+											li= msgsAll
+										else
+											li No hay mensajes
