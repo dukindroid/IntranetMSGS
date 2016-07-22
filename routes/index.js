@@ -6,6 +6,9 @@ var Mensaje = require('../models/message')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
+  var ip = req.header('x-forwarded-for') || req.connection.remoteAddress;
+  console.log("Nueva conexión desde " + ip);
+  //console.dir(req);
   res.render('index', { 
   	title: 'IntranetMSGS',
   	user: req.user
@@ -24,18 +27,21 @@ router.get('/login', function(req, res, next) {
 
 // process the login form
 router.post('/login', passport.authenticate('local'), function(req, res) {
+    console.log("###DBG " + req.user.username + " se ha conectado.");
     res.redirect('/main');
 });
 
 router.post('/enviarmensaje', isLoggedIn, function(req, res) {
   console.log("###DBG Nuevo Mensaje");
-  console.dir(req.body);
+  console.log("Para " + req.body.dest);
+  console.log("Contenido " + req.body.text)
   var nuevoMensaje = new Mensaje({
         text: req.body.text,
         author: req.user.username,
         dest: req.body.dest,
         roleDest: req.body.roleDest,
-        created: Date.now()
+        created: Date.now(),
+        leido: false
       });
   nuevoMensaje.save( function(err, res){
     if (err) {
@@ -47,7 +53,7 @@ router.post('/enviarmensaje', isLoggedIn, function(req, res) {
       console.log("Mensaje nuevo guardado.")
     }
   });
-  res.redirect('/main', { });
+  res.redirect(200, '/main');
 });
 
 // process the signin form
@@ -75,15 +81,21 @@ router.get('/logout', function(req, res) {
 // MAIN SECTION =========================
 router.get('/main', isLoggedIn, function(req, res) {
 	console.log("Cargando la Pagina principal.");
-	var msgsAll = 0;
-  Mensaje.find ({}, function(err, docs){
-    msgsAll = docs;
-    console.dir(docs);
-  })
-  res.render('main', {
-    user: req.user,
-    messages: msgsAll
-  })
+  console.log("Buscando mensajes para " + req.user.username)
+  Mensaje.find ({ }, "author dest roleDest text creado" , function(err, docs){
+    if (err) {
+      return console.error(err);
+    } else {
+
+      console.log(docs);
+      res.render('main', {
+        user: req.user,
+        docs: docs
+      });      
+    }
+    //console.dir(docs);
+  });
+
 });
 
 function isLoggedIn(req, res, next) {

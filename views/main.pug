@@ -23,7 +23,7 @@ block body
 					p lorem ipsum
 					p asdf asdf asdf arwetgwerjltgadjgbnakl;sdjgasd
 					p werqawerawerawera
-				#tabProfile.tab-pane
+				#tabProfile.tab-pane 
 					h1
 						span.fa.fa-anchor
 						|  Perfil
@@ -37,52 +37,85 @@ block body
 										|  Local
 								.panel-body
 									p
-										strong id
-										| :
+										strong id: #{user.id}
 										br
-										strong email
-										| :
+										strong email: #{user.username}
 										br
-										strong rol
-										| : 
-					//- p Ultima actualizacion: Ahorita!
+										strong rol: #{user.rol}
+					p Registrado como #{user.username}
+					a.btn.btn-default(href="/logout")
+						span.fa.fa-sign-out Salir
 				#tabMessages.tab-pane
-					h1
+					h1 
 						span.fa.fa-anchor
 						|  Mensajes
-					p Envíe y reciba mensajes: 
 					.row
-						// Escribir mensaje
 						.col-sm-3
-							form.form-signin(data-toggle='validator', role='form' action='/enviarmensaje', method='POST')
-								.form-group
-									label Para:
-									input.form-control(type='text', name='dest', placeholder='destinatario(s)', required, autofocus='true')
-								.form-group
-									.radio
-										label.radio-inline
-											input(type='radio', name='roleDest', value='gerentes')
-											| Grupo Subgerentes
-									.radio
-										label.radio-inline
-											input(type='radio', name='roleDest', value='ejecutivos')
-											| Grupo Ejecutivos
-									.radio
-										label.radio-inline
-											input(type='radio', name='roleDest', value='todos')
-											| Todos
-								.form-group
-									label Mensaje
-									input.form-control(type='text', name='text', placeholder='Escriba su mensaje', required)
-								button.btn.btn-warning.btn-lg(type='submit') Enviar
-						// Ver lista de mensajes
+							.panel.panel-primary
+								.panel-heading
+									h3.panel-title Enviar mensaje:
+								.panel-body
+									form.form-signin(data-toggle='validator', role='form' action='/enviarmensaje', method='POST')
+										.form-group
+											label Para:
+											input.form-control(type='text', name='dest', placeholder='destinatario(s)', required, autofocus='true')
+										.form-group
+											.radio
+												label.radio-inline
+													input(type='radio', name='roleDest', value='gerentes')
+													| Grupo Subgerentes
+											.radio
+												label.radio-inline
+													input(type='radio', name='roleDest', value='ejecutivos')
+													| Grupo Ejecutivos
+											.radio
+												label.radio-inline
+													input(type='radio', name='roleDest', value='todos')
+													| Todos
+										.form-group
+											label Mensaje
+											input.form-control(type='text', name='text', placeholder='Escriba su mensaje', required)
+										button.btn.btn-warning.btn-lg(type='submit') Enviar
 						.col-sm-9
-							.well
-								h3.text-primary
-									span.fa.fa-facebook
-									|  Bandeja de entrada
-									ul
-										if msgsAll 
-											li= msgsAll
-										else
-											li No hay mensajes
+							.panel.panel-info
+								.panel-heading
+									h3.panel-title Bandeja de entrada 
+								.panel-body
+									
+										//-if (!docs.lenght)
+										//-	p No hay mensajes.
+										//- else 
+										table.table.table-striped.table-hover
+											thead
+												tr
+												th Autor
+												th Creado
+												th Para
+											tbody
+												//-? docs : ['No hay mensajes.'] 
+												each doc, index in docs
+													tr
+														td
+															a(data-target='#myModal'+index, data-toggle='modal')
+																div(style='height:100%;width:100%') #{doc.author}
+														td
+															a(data-target='#myModal'+index, data-toggle='modal')
+																div(style='height:100%;width:100%') #{doc.creado}
+														td
+															a(data-target='#myModal'+index, data-toggle='modal')
+																div(style='height:100%;width:100%') #{doc.dest}
+																
+															div.modal.fade(id='myModal'+index, tabindex='-1', role='dialog')
+																.modal-dialog
+																	.modal-content
+																		.modal-header
+																			button.close(type='button', data-dismiss='modal')
+																				span(aria-hidden='true') ×
+																				span.sr-only Cerrar
+																			h4#myModalLabel.modal-title doc recibido de #{doc.author} el #{doc.creado}
+																				if (doc.roleDest)
+																					p Dirigido a #{doc.roleDest}s.
+																		.modal-body
+																			p= doc.text
+																		.modal-footer
+																			button.btn.btn-default(type='button', data-dismiss='modal') Cerrar
