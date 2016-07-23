@@ -1,9 +1,10 @@
+var ObjectId = require('mongodb').ObjectID;
 var express = require('express');
 var passport = require('passport');
 var Account = require('../models/account');
 var router = express.Router();
 var Mensaje = require('../models/message')
-
+var mongoose = require('mongoose'); 
 /* GET home page. */
 router.get('/', function(req, res, next) {
   var ip = req.header('x-forwarded-for') || req.connection.remoteAddress;
@@ -31,6 +32,7 @@ router.post('/login', passport.authenticate('local'), function(req, res) {
     res.redirect('/main');
 });
 
+// process a new message form
 router.post('/enviarmensaje', isLoggedIn, function(req, res) {
   console.log("###DBG Nuevo Mensaje");
   console.log("Para " + req.body.dest);
@@ -56,6 +58,37 @@ router.post('/enviarmensaje', isLoggedIn, function(req, res) {
   res.redirect(200, '/main');
 });
 
+// process the role change form
+router.post('/enviarrol', isLoggedIn, function(req, res) {
+  console.log("###DBG Se pretende editar el rol de " + req.body.username + " " + req.body.id.replace(/\"/g,''));
+  var unID =  req.body.id.replace(/\"/g,'');
+  console.log(unID);
+  Account.findOneAndUpdate({username:req.body.username}, {rol:req.body.roleDest}, function(err, user) {
+    if (err) {
+      console.log(id + ' no existe.');
+      res.status(404);
+      var err = new Error('Not Found');
+      err.status = 404;
+      return err;
+    }
+  });
+  res.redirect(200, '/main');
+});
+
+// process a password reset form
+router.post('/resetpwd', isLoggedIn, function(req, res) {
+  Account.findOne({_id:req.body.userResetId}).then(function(user){
+    console.log(user.username + "?");
+    user.setPassword("prueba", function(){
+      user.save();
+      console.log("###DBG Se reseteo el password de " + user.username);
+    })
+  });
+
+  res.redirect(200, '/main');
+});
+
+
 // process the signin form
 router.post('/signin', function(req, res) {
 	console.log("###DBG Nuevo Usuario");
@@ -78,24 +111,31 @@ router.get('/logout', function(req, res) {
     res.redirect('/');
 });
 
-// MAIN SECTION =========================
+// ------------------------------------------------------------------
+// MAIN SECTION =====================================================
+// ------------------------------------------------------------------
 router.get('/main', isLoggedIn, function(req, res) {
 	console.log("Cargando la Pagina principal.");
   console.log("Buscando mensajes para " + req.user.username)
-  Mensaje.find ({ }, "author dest roleDest text creado" , function(err, docs){
+  Mensaje.find ({ dest:req.user.username}, "_id author dest roleDest text creado" , function(err, docs){
     if (err) {
       return console.error(err);
     } else {
-
-      console.log(docs);
-      res.render('main', {
-        user: req.user,
-        docs: docs
-      });      
+      // Si es gerente:
+      Account.find({}, "username rol createdAt", function (err, users){
+          if (err) {
+            return console.error(err);
+          } else {
+            console.log(users);
+            res.render('main', {
+              me: req.user,
+              users : users,
+              docs: docs
+            });
+          }
+      });       
     }
-    //console.dir(docs);
   });
-
 });
 
 function isLoggedIn(req, res, next) {

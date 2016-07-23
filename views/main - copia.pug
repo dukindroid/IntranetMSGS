@@ -39,12 +39,12 @@ block body
 										|  Local
 								.panel-body
 									p
-										strong id: #{me.id}
+										strong id: #{user.id}
 										br
-										strong email: #{me.username}
+										strong email: #{user.username}
 										br
-										strong rol: #{me.rol}
-					p Registrado como #{me.username}
+										strong rol: #{user.rol}
+					p Registrado como #{user.username}
 					a.btn.btn-default(href="/logout")
 						span.fa.fa-sign-out Salir
 				#tabMessages.tab-pane
@@ -83,6 +83,9 @@ block body
 								.panel-heading
 									h3.panel-title Bandeja de entrada 
 								.panel-body
+									if (!docs.lenght)
+										p No hay mensajes.
+									else 
 										table.table.table-striped.table-hover
 											thead
 												tr
@@ -93,15 +96,16 @@ block body
 												each doc, index in docs
 													tr
 														td
-															a(data-target='#myModal'+ (index + 1) , data-toggle='modal')
+															a(data-target='#myModal'+index, data-toggle='modal')
 																div(style='height:100%;width:100%') #{doc.author}
 														td
-															a(data-target='#myModal'+(index + 1), data-toggle='modal')
+															a(data-target='#myModal'+index, data-toggle='modal')
 																div(style='height:100%;width:100%') #{doc.creado}
 														td
-															a(data-target='#myModal'+(index + 1), data-toggle='modal')
+															a(data-target='#myModal'+index, data-toggle='modal')
 																div(style='height:100%;width:100%') #{doc.dest}
-															div.modal.fade(id='myModal'+(index + 1), tabindex='-1', role='dialog')
+																
+															div.modal.fade(id='myModal'+index, tabindex='-1', role='dialog')
 																.modal-dialog
 																	.modal-content
 																		.modal-header
@@ -119,8 +123,7 @@ block body
 					h1 
 						span.fa.fa-anchor
 						|  Administración
-					.row
-						table.table.table-striped.table-hover
+					.rowtable.table.table-striped.table-hover
 											thead
 												tr
 												th usuario
@@ -128,53 +131,28 @@ block body
 												th creado
 											tbody
 												//-? docs : ['No hay mensajes.'] 
-												each user, index in users
+												each user, indexB in users
 													tr
 														td
-															a(data-target='#myModal'+(index + 1)+ 'B', data-toggle='modal')
+															a(data-target='#myModal'+indexB + 'B', data-toggle='modal')
 																div(style='height:100%;width:100%') #{user.username}
 														td
-															a(data-target='#myModal'+(index + 1) + 'B', data-toggle='modal')
+															a(data-target='#myModal'+index + 'B', data-toggle='modal')
 																div(style='height:100%;width:100%') #{user.rol}
 														td
-															a(data-target='#myModal'+(index + 1)+ 'B', data-toggle='modal')
-																div(style='height:100%;width:100%') #{user.createdAt}
-															div.modal.fade(id='myModal'+(index + 1)+ 'B', tabindex='-1', role='dialog')
+															a(data-target='#myModal'+index + 'B', data-toggle='modal')
+																div(style='height:100%;width:100%') #{user.created}
+																
+															div.modal.fade(id='myModal'+index + 'B', tabindex='-1', role='dialog')
 																.modal-dialog
 																	.modal-content
 																		.modal-header
 																			button.close(type='button', data-dismiss='modal')
 																				span(aria-hidden='true') ×
 																				span.sr-only Cerrar
-																			h4#myModalLabel.modal-title Modificar cuenta de #{user.username}, id:#{user._id}
+																			h4#myModalLabel.modal-title Modificar cuenta de #{user.username}
 																		.modal-body
-																			form.form-signin(data-toggle='validator', role='form' action='/resetpwd', method='POST')
-																				input(type='hidden', name='username', value=user.username )
-																				input(type='hidden', name='_id', value=user._id )
-																				button.btn.btn-warning.btn-lg(type='submit') Resetear contraseña
-																				p La contraseña por default es "prueba".
-																			form.form-signin(data-toggle='validator', role='form' action='/enviarrol', method='POST')
-																				input(type='hidden', name='username', value=user.username )
-																				input(type='hidden', name='id', value=user._id)
-																				.form-group
-																					label Rol
-																					.radio
-																						label.radio-inline
-																							input(type='radio', name='roleDest', value='gerente', checked=rol=='gerente')
-																							| Gerente
-																						label.radio-inline
-																							input(type='radio', name='roleDest', value='subgerente', checked=rol=='subgerente')
-																							| Subgerente
-																					.radio
-																						label.radio-inline
-																							input(type='radio', name='roleDest', value='ejecutivo', checked=rol=='ejecutivo')
-																							| Ejecutivo
-																					.radio
-																						label.radio-inline
-																							input(type='radio', name='roleDest', value='aplicante', checked=rol=='aplicante')
-																							| Aplicante			
-																				button.btn.btn-warning.btn-lg(type='submit') Enviar
-
+																			p
 																		.modal-footer
 																			button.btn.btn-default(type='button', data-dismiss='modal') Cerrar
 
